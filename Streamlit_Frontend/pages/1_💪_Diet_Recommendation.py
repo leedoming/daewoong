@@ -18,7 +18,7 @@ if 'person' not in st.session_state:
 
 class Person:
 
-    def __init__(self, age, height, weight, gender, activity, meals_calories_perc, weight_loss):
+    def __init__(self, age, height, weight, gender, activity, meals_calories_perc, weight_loss, vegan, avoid_food, cook_tool):
         self.age = age
         self.height = height
         self.weight = weight
@@ -26,13 +26,13 @@ class Person:
         self.activity = activity
         self.meals_calories_perc = meals_calories_perc
         self.weight_loss = weight_loss
-        self.food_vegan = vegan
+        self.vegan = vegan
         self.avoid_food = avoid_food #알레르기 연동 데이터로 수정예정
         self.cook_tool = cook_tool
 
     # 해리스 베네딕트 공식 활용 기초대사량 계산
     def calculate_bmr(self, ):
-        if self.gender="여성":
+        if self.gender == "여성":
             bmr = 655 + (9.6 * self.weight) + (1.8 * self.height) - (4.7 * self.age)
         else:
             bmr = 66 + (13.7 * self.weight) + (5 * self.height) - (6.8 * self.age)
@@ -110,16 +110,16 @@ class Display:
             건강 BMI 범위: 18.5 kg/m² - 25 kg/m².
             """)
 
-    def display_bmr(self, person):
-        st.header('기초대사량(BMR) 계산기')
-        bmr = person.calculate_bmr()
-        st.metric(label="기초대사량(BMR)", value=f'{bmr} kcal')
+    #def display_bmr(self, person):
+        #st.header('기초대사량(BMR) 계산기')
+        #bmr = person.calculate_bmr()
+        #st.metric(label="기초대사량(BMR)", value=f'{bmr} kcal')
 
     def display_calories(self, person):
         st.header('칼로리 계산기')
         maintain_calories = person.calories_calculator()
         st.write(
-            'The results show a number of daily calorie estimates that can be used as a guideline for how many calories to consume each day to maintain, lose, or gain weight at a chosen rate.')
+            '기초대사량(BMR) 기반 다이어트 플랜별 일일 적정 섭취 칼로리입니다.')
         for plan, weight, loss, col in zip(self.plans, self.weights, self.losses, st.columns(4)):
             with col:
                 st.metric(label=plan, value=f'{round(maintain_calories * weight)} kcal/day', delta=loss,
@@ -302,7 +302,7 @@ with st.form("recommendation_form"):
     # 선호 데이터
     st.write("선호 데이터를 입력해주세요.")
     food_vegan = st.radio('식단(비건 여부)', ('일반식', '비건'))
-    if food_vegan = "일반식":
+    if food_vegan == "일반식":
         vegan = "No"
     else:
         vegan = "Yes"
