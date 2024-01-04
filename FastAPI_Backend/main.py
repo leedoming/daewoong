@@ -7,7 +7,7 @@ from model import recommend,output_recommended_recipes
 dataset=pd.read_csv('../Data/dataset.csv',compression='gzip')
 #데이터 영양소 컬럼명 영문에서 한글 변환
 new_columns = {'Calories':'열량','FatContent':'지방','SaturatedFatContent':'포화지방','CholesterolContent':'콜레스테롤','SodiumContent':'나트륨','CarbohydrateContent':'탄수화물','FiberContent':'섬유질','SugarContent':'당류','ProteinContent':'단백질'}
-dataset.rename(columns=new_columnsm, inplace=True)
+dataset.rename(columns=new_columns, inplace=True)
 
 app = FastAPI()
 
@@ -27,15 +27,15 @@ class Recipe(BaseModel):
     PrepTime:str
     TotalTime:str
     RecipeIngredientParts:list[str]
-    Calories:float
-    FatContent:float
-    SaturatedFatContent:float
-    CholesterolContent:float
-    SodiumContent:float
-    CarbohydrateContent:float
-    FiberContent:float
-    SugarContent:float
-    ProteinContent:float
+    열량:float
+    지방:float
+    포화지방:float
+    콜레스테롤:float
+    나트륨:float
+    탄수화물:float
+    섬유질:float
+    당류:float
+    단백질:float
     RecipeInstructions:list[str]
 
 class PredictionOut(BaseModel):

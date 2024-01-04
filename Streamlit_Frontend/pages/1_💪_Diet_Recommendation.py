@@ -15,10 +15,9 @@ if 'person' not in st.session_state:
     st.session_state.person = None
     st.session_state.weight_loss_option = None
 
-
 class Person:
 
-    def __init__(self, age, height, weight, gender, activity, meals_calories_perc, weight_loss, vegan, avoid_food, cook_tool, family_count):
+    def __init__(self, age, height, weight, gender, activity, meals_calories_perc, weight_loss, vegan, avoid_food, cook_tool):
         self.age = age
         self.height = height
         self.weight = weight
@@ -29,7 +28,6 @@ class Person:
         self.vegan = vegan
         self.avoid_food = avoid_food #알레르기 연동 데이터로 수정예정
         self.cook_tool = cook_tool
-        self.family_count = family_count
 
     # 해리스 베네딕트 공식 활용 기초대사량 계산
     def calculate_bmr(self, ):
@@ -111,10 +109,10 @@ class Display:
             건강 BMI 범위: 18.5 kg/m² - 25 kg/m².
             """)
 
-    #def display_bmr(self, person):
-        #st.header('기초대사량(BMR) 계산기')
-        #bmr = person.calculate_bmr()
-        #st.metric(label="기초대사량(BMR)", value=f'{bmr} kcal')
+    def display_bmr(self, person):
+        st.header('기초대사량(BMR) 계산기')
+        bmr = person.calculate_bmr()
+        st.metric(label="기초대사량(BMR)", value=f'{bmr} kcal')
 
     def display_calories(self, person):
         st.header('칼로리 계산기')
@@ -136,9 +134,9 @@ class Display:
                     # st.markdown(f'<div style="text-align: center;">{meal_name.upper()}</div>', unsafe_allow_html=True)
                     st.markdown(f'##### {meal_name.upper()}')
                     for recipe in recommendation:
-
                         recipe_name = recipe['Name']
                         expander = st.expander(recipe_name)
+                        button_label = "개인 최적화"
                         recipe_link = recipe['image_link']
                         recipe_img = f'<div><center><img src={recipe_link} alt={recipe_name}></center></div>'
                         nutritions_df = pd.DataFrame({value: [recipe[value]] for value in nutritions_values})
@@ -170,6 +168,29 @@ class Display:
                                 - Total Time      : {recipe['TotalTime']}min
                             """)
 
+                        # 레시피별 개인 최적화
+                        #if st.button(button_label):
+                            # 버튼이 눌렸을 때 수행할 동작
+                            #personal_category = expander.radio('최적화 기능 선택', ['대체당', '인원 수 조절', '재료 대체'])
+                            #if expander.button("다음"):
+                                #if personal_category == "대체당":
+                                    #expander.write('1. 스테비아 사용\n * 설탕 대비 약 150-300배 정도 적게 사용합니다. 차가운 음식에 사용하는 것이 좋습니다.')
+                                    #expander.write('2. 알룰로스 사용\n * 설탕과 같은 양으로 사용합니다. 고온에서 안정적이어서 베이킹에도 사용이 가능합니다.')
+                                #elif personal_category == "용량 조절":
+                                    st.number_input("")
+                                    #with expander.spinner("레시피 개인 최적화중..."):
+                                        ori_serving = recipe['RecipeServings']
+                                        recipe_scale(recipe, new_serving, ori_serving)  # 용량 조절 함수 예정 - ai 활용
+                                #elif personal_category == "재료 대체":
+                                    #ori_ingredient = expander.selectbox(f'대체하고자 하는 재료를 선택해주세요.', ingredient in recipe['RecipeIngredientParts'])
+                                    #new_ingredient = expander.text_input('사용하고자 하는 재료를 입력해주세요.')
+                                    #if expander.button("최적화"):
+                                        #with expander.spinner("레시피 개인 최적화중..."):
+                                            #recipe_replace_ingredient(ori_ingredient, new_ingredient)  # 재료 대체 함수 예정 - ai 활용
+    #def recipe_scale(self, recipe, people):
+        #prompt = f"Adjust the quantity of the following recipe to {people} people servings:\n\n{recipe}\n"
+
+    #def recipe_replace_ingredient(self, ori_ingredient, new_ingredient):
     def display_meal_choices(self, person, recommendations):
         st.subheader('Choose your meal composition:')
         # Display meal compositions choices
@@ -221,7 +242,7 @@ class Display:
                     for nutrition_value in nutritions_values:
                         total_nutrition_values[nutrition_value] += meal[nutrition_value]
 
-        total_calories_chose = total_nutrition_values['Calories']
+        total_calories_chose = total_nutrition_values['열량']
         loss_calories_chose = round(person.calories_calculator() * person.weight_loss)
 
         # Display corresponding graphs
@@ -283,9 +304,9 @@ st.markdown(title, unsafe_allow_html=True)
 with st.form("recommendation_form"):
     # 건강 데이터
     st.write("건강 데이터를 입력해주세요.")
-    age = st.number_input('나이', min_value=2, max_value=120, step=1, value=22)
-    height = st.number_input('키(cm)', min_value=50, max_value=300, step=1, value=161)
-    weight = st.number_input('체중(kg)', min_value=10, max_value=300, step=1, value=54)
+    age = st.number_input('나이', min_value=2, max_value=120, step=1)
+    height = st.number_input('키(cm)', min_value=50, max_value=300, step=1)
+    weight = st.number_input('체중(kg)', min_value=10, max_value=300, step=1)
     gender = st.radio('성별', ('남성', '여성'))
     activity = st.select_slider('활동량', options=['거의 움직이지 않음', '조금(주 1-2회 운동)', '보통(주 3-5회 운동)', '많이(주 6-7회 운동)',
                                                 '매우 많이(매일 운동)'])
@@ -317,7 +338,7 @@ with st.form("recommendation_form"):
     generated = st.form_submit_button("Generate")
 if generated:
     st.session_state.generated = True
-    person = Person(age, height, weight, gender, activity, meals_calories_perc, weight_loss, vegan, avoid_food, cook_tool, family_count)
+    person = Person(age, height, weight, gender, activity, meals_calories_perc, weight_loss, vegan, avoid_food, cook_tool)
     with st.container():
         display.display_bmi(person)
     with st.container():

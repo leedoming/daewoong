@@ -8,7 +8,7 @@ from sklearn.preprocessing import FunctionTransformer
 
 def scaling(dataframe):
     scaler=StandardScaler()
-    prep_data=scaler.fit_transform(dataframe.iloc[:,6:15].to_numpy())
+    prep_data=scaler.fit_transform(dataframe.iloc[:,9:18].to_numpy())
     return prep_data,scaler
 
 def nn_predictor(prep_data):
