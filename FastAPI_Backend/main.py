@@ -4,8 +4,10 @@ from typing import List,Optional
 import pandas as pd
 from model import recommend,output_recommended_recipes
 
-
 dataset=pd.read_csv('../Data/dataset.csv',compression='gzip')
+#데이터 영양소 컬럼명 영문에서 한글 변환
+new_columns = {'Calories':'열량','FatContent':'지방','SaturatedFatContent':'포화지방','CholesterolContent':'콜레스테롤','SodiumContent':'나트륨','CarbohydrateContent':'탄수화물','FiberContent':'섬유질','SugarContent':'당류','ProteinContent':'단백질'}
+dataset.rename(columns=new_columnsm, inplace=True)
 
 app = FastAPI()
 
