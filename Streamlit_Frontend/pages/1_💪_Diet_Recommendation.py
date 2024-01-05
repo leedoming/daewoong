@@ -15,6 +15,21 @@ if 'person' not in st.session_state:
     st.session_state.person = None
     st.session_state.weight_loss_option = None
 
+class Recommendation:
+    def __init__(self,nutrition_list,ingredient_txt):
+        self.nutrition_list=nutrition_list
+        self.ingredient_txt=ingredient_txt
+        pass
+    def generate(self,):
+        params={'n_neighbors':5,'return_distance':False}
+        ingredients=self.ingredient_txt.split(';')
+        generator=Generator(self.nutrition_list,5,ingredients,params)
+        recommendations=generator.generate()
+        recommendations = recommendations.json()['output']
+        if recommendations!=None:
+            for recipe in recommendations:
+                recipe['image_link']=find_image(recipe['Name'])
+        return recommendations
 class Person:
     def __init__(self, age, height, weight, gender, activity, meals_calories_perc, weight_loss, vegan, avoid_food, cook_tool):
         self.age = age
