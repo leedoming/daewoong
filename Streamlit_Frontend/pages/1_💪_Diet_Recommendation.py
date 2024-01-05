@@ -168,6 +168,8 @@ class Display:
                                 - Total Time      : {recipe['TotalTime']}min
                             """)
 
+                        print(recipe['Name'])
+
                         # 레시피별 개인 최적화
                         #if st.button(button_label):
                             # 버튼이 눌렸을 때 수행할 동작
@@ -177,20 +179,20 @@ class Display:
                                     #expander.write('1. 스테비아 사용\n * 설탕 대비 약 150-300배 정도 적게 사용합니다. 차가운 음식에 사용하는 것이 좋습니다.')
                                     #expander.write('2. 알룰로스 사용\n * 설탕과 같은 양으로 사용합니다. 고온에서 안정적이어서 베이킹에도 사용이 가능합니다.')
                                 #elif personal_category == "용량 조절":
-                                    st.number_input("")
+                                    #st.number_input("")
                                     #with expander.spinner("레시피 개인 최적화중..."):
-                                        ori_serving = recipe['RecipeServings']
-                                        recipe_scale(recipe, new_serving, ori_serving)  # 용량 조절 함수 예정 - ai 활용
+                                        #ori_serving = recipe['RecipeServings']
+                                        #recipe_scale(recipe, new_serving, ori_serving)  # 용량 조절 함수 예정 - ai 활용
                                 #elif personal_category == "재료 대체":
                                     #ori_ingredient = expander.selectbox(f'대체하고자 하는 재료를 선택해주세요.', ingredient in recipe['RecipeIngredientParts'])
                                     #new_ingredient = expander.text_input('사용하고자 하는 재료를 입력해주세요.')
                                     #if expander.button("최적화"):
                                         #with expander.spinner("레시피 개인 최적화중..."):
                                             #recipe_replace_ingredient(ori_ingredient, new_ingredient)  # 재료 대체 함수 예정 - ai 활용
-    #def recipe_scale(self, recipe, people):
-        #prompt = f"Adjust the quantity of the following recipe to {people} people servings:\n\n{recipe}\n"
-
-    #def recipe_replace_ingredient(self, ori_ingredient, new_ingredient):
+    def recipe_scale(self, recipe, ori_serving, new_serving):
+        prompt = f"Adjust the quantity of the following recipe to {new_serving} servings:\n\n{recipe}\n\nAdjusted Recipe:"
+    def recipe_replace_ingredient(self, ori_ingredient, new_ingredient):
+        prompt = f"If it is okay"
     def display_meal_choices(self, person, recommendations):
         st.subheader('Choose your meal composition:')
         # Display meal compositions choices

@@ -3,12 +3,15 @@ from pydantic import BaseModel,conlist
 from typing import List,Optional
 import pandas as pd
 from model import recommend,output_recommended_recipes
+import gzip
 
-dataset=pd.read_csv('../Data/dataset.csv',compression='gzip')
+with gzip.open("../Data/dataset.csv", 'rt', encoding='utf-8') as file:
+    dataset = pd.read_csv(file)
 #데이터 영양소 컬럼명 영문에서 한글 변환
 new_columns = {'Calories':'열량','FatContent':'지방','SaturatedFatContent':'포화지방','CholesterolContent':'콜레스테롤','SodiumContent':'나트륨','CarbohydrateContent':'탄수화물','FiberContent':'섬유질','SugarContent':'당류','ProteinContent':'단백질'}
 dataset.rename(columns=new_columns, inplace=True)
-
+print(dataset.head())
+print(dataset.columns)
 app = FastAPI()
 
 class params(BaseModel):
@@ -22,11 +25,14 @@ class PredictionIn(BaseModel):
 
 
 class Recipe(BaseModel):
+    #RecipeCategory:str
     Name:str
     CookTime:str
     PrepTime:str
     TotalTime:str
     RecipeIngredientParts:list[str]
+    #RecipeIngredientQuantities: list[str]
+    #RecipeServings: int
     열량:float
     지방:float
     포화지방:float
@@ -37,6 +43,8 @@ class Recipe(BaseModel):
     당류:float
     단백질:float
     RecipeInstructions:list[str]
+   # Vegan:str
+   # Dessert:str
 
 class PredictionOut(BaseModel):
     output: Optional[List[Recipe]] = None
