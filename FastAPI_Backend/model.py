@@ -57,9 +57,10 @@ def recommend(dataframe, _input, ingredients=[], params={'n_neighbors': 5, 'retu
 def extract_quoted_strings(s):
     # Find all the strings inside double quotes
     strings = re.findall(r'"([^"]*)"', s)
+    # Replace non-quoted 'NA' with quoted 'NA'
+    s = re.sub(r'(?<!")NA(?!")', '"NA"', s)
     # Join the strings with 'and'
     return strings
-
 
 def output_recommended_recipes(dataframe):
     if dataframe is not None:
@@ -67,6 +68,7 @@ def output_recommended_recipes(dataframe):
         output = output.to_dict("records")
         for recipe in output:
             recipe['RecipeIngredientParts'] = extract_quoted_strings(recipe['RecipeIngredientParts'])
+            recipe['RecipeIngredientQuantities'] = extract_quoted_strings(recipe['RecipeIngredientQuantities'])
             recipe['RecipeInstructions'] = extract_quoted_strings(recipe['RecipeInstructions'])
     else:
         output = None
